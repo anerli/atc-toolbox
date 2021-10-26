@@ -50,10 +50,13 @@ class SVR_Forecaster:
 		#return y_pred
 
 	def predict_range(self, start_date, end_date):
-		# Technically no reason why this can't be the case, but seems silly
-		assert start_date >= self.train_start_date
-		# TODO: Allow user to set calendar
 		dates = date_range(start_date, end_date, self.calendar)
+		# Technically no reason why this can't be the case, but seems silly
+		if not dates[0] >= self.train_start_date:
+			print(f'Error: Start date {start_date} below train start date {self.train_start_date}')
+			exit(1)
+		# TODO: Allow user to set calendar
+		
 		return self.predict(dates)
 
 	def predict_train(self):
@@ -62,17 +65,29 @@ class SVR_Forecaster:
 if __name__ == '__main__':
 	import yfinance as yf
 	import matplotlib.pyplot as plt
+	from datetime import datetime
 
-	df = yf.download('MSFT', '2015-01-01', '2020-01-01')
+	start_date = datetime(2015, 1, 1)
+	end_date = datetime(2020, 1, 1)
+
+	df = yf.download('MSFT', start_date, end_date)
 
 	print(df)
 
 	# features = ['Adj Close', 'Open']
 	features = ['Adj Close']
 
-	forecaster = SVR_Forecaster(df, features)
+	train_end_date = datetime(2018, 1, 1)
+
+	# Train only on a subset of the data
+	df_train = df.loc[start_date:train_end_date,:]
+	df_test = df.loc[train_end_date:,:]
+	print(df_train)
+
+	forecaster = SVR_Forecaster(df_train, features)
 	#print(forecaster.df)
-	y_pred = forecaster.predict_train()
+	#y_pred = forecaster.predict_train()
+	y_pred = forecaster.predict_range(start_date, end_date)
 	print(y_pred)
 	print(type(y_pred))
 
@@ -80,7 +95,8 @@ if __name__ == '__main__':
 	#for feature in features:
 
 	for feature in features:
-		plt.plot(df[[feature]], label=f'{feature} Actual')
+		plt.plot(df_train[[feature]], label=f'{feature} Train')
+		plt.plot(df_test[[feature]], label=f'{feature} Test')
 		plt.plot(y_pred[[feature]], label=f'{feature} SVR Forecast')
 
 	#plt.plot(df[features])
