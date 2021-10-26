@@ -12,6 +12,8 @@ def date_range(
 	end_date: datetime, 
 	cal_restrict: mcal.MarketCalendar=None
 	):
+	start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+	end_date = end_date.replace(hour=0, minute=0, second=0, microsecond=0)
 	restrict = False
 	if cal_restrict:
 		restrict = True
@@ -21,7 +23,8 @@ def date_range(
 	dates = []
 	for n in range(days):
 		date = start_date + timedelta(days=n)
-		# FIXME: Potential problem if date has time attributes, wont equal any valid days.
+		# The equality check inside the "in" is fine since we 
+		# made sure to 0 the time fields of start and end dates
 		if not restrict or date in valid_days:
 			dates.append(date)
 	return dates
