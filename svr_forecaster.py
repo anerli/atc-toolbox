@@ -1,4 +1,5 @@
 from sklearn.svm import SVR
+from sklearn.multioutput import MultiOutputRegressor
 from date_utils import date_range
 import pandas_market_calendars as mcal
 import pandas as pd
@@ -11,20 +12,21 @@ class SVR_Forecaster:
 	SVR_args: args to pass to SVR model.
 	SVR_kwargs: kwargs to pass to SVR model.
 	'''
-	def __init__(self, df, feature, *SVR_args, **SVR_kwargs):
+	def __init__(self, df, features, *SVR_args, **SVR_kwargs):
 		self.train_start_date = df.index[0].to_pydatetime()
 		self.train_end_date = df.index[-1].to_pydatetime()
 
 		self.calendar = mcal.get_calendar('NYSE')
 
-		self.y_feature_name = feature
+		self.y_feature_names = features
 
 		self.x_train = pd.DataFrame(index=df.index)
 		# Column name below doesn't actually matter
 		self.x_train['Days Since Train Start'] = [(df.index[i].to_pydatetime() - df.index[0].to_pydatetime()).days for i in range(df.shape[0])]
-		self.y_train = df[[feature]]
+		self.y_train = df[features]
 
-		self.model = SVR(*SVR_args, **SVR_kwargs)
+		svr_model = SVR(*SVR_args, **SVR_kwargs)
+		self.model = MultiOutputRegressor(svr_model)
 		self.model.fit(self.x_train, self.y_train)
 
 	def predict(self, dates):
@@ -33,9 +35,19 @@ class SVR_Forecaster:
 		y_pred = self.model.predict(x_dim_fix)
 		#df = pd.DataFrame(index=pd.DatetimeIndex(date_range(dates[0], dates[1], self.calendar)))
 		#df['Adj Close'] = y_pred
-		df = pd.DataFrame(index=pd.DatetimeIndex(date_range(dates[0], dates[-1], self.calendar)))
-		df[self.y_feature_name] = y_pred
+
+		#df = pd.DataFrame(index=pd.DatetimeIndex(date_range(dates[0], dates[-1], self.calendar)))
+		#df[self.y_feature_name] = y_pred
+		#return df
+
+		df = pd.DataFrame(
+			data=y_pred,
+			index=pd.DatetimeIndex(date_range(dates[0], dates[-1], self.calendar)),
+			columns=self.y_feature_names
+			)
+		#df[self.y_feature_name] = y_pred
 		return df
+		#return y_pred
 
 	def predict_range(self, start_date, end_date):
 		# Technically no reason why this can't be the case, but seems silly
@@ -55,13 +67,25 @@ if __name__ == '__main__':
 
 	print(df)
 
-	feature = 'Adj Close'
+	# features = ['Adj Close', 'Open']
+	features = ['Adj Close']
 
-	forecaster = SVR_Forecaster(df, feature)
+	forecaster = SVR_Forecaster(df, features)
 	#print(forecaster.df)
 	y_pred = forecaster.predict_train()
 	print(y_pred)
+	print(type(y_pred))
 
-	plt.plot(df[[feature]])
-	plt.plot(y_pred)
+	#plt.plot(df[[feature]])
+	#for feature in features:
+
+	for feature in features:
+		plt.plot(df[[feature]], label=f'{feature} Actual')
+		plt.plot(y_pred[[feature]], label=f'{feature} SVR Forecast')
+
+	#plt.plot(df[features])
+	#plt.plot(y_pred)
+	#df[features].plot()
+	#y_pred.plot()
+	plt.legend()
 	plt.show()
