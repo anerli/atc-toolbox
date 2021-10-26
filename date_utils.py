@@ -21,7 +21,7 @@ def date_range(
 	if cal_restrict:
 		restrict = True
 		valid_days = cal_restrict.valid_days(start_date, end_date)
-	print(valid_days)
+	#print(valid_days)
 	days = (end_date - start_date).days + 1
 	dates = []
 	for n in range(days):

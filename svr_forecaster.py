@@ -53,11 +53,15 @@ if __name__ == '__main__':
 
 	df = yf.download('MSFT', '2015-01-01', '2020-01-01')
 
-	forecaster = SVR_Forecaster(df, 'Adj Close')
+	print(df)
+
+	feature = 'Adj Close'
+
+	forecaster = SVR_Forecaster(df, feature)
 	#print(forecaster.df)
 	y_pred = forecaster.predict_train()
 	print(y_pred)
 
-	plt.plot(df['Adj Close'])
+	plt.plot(df[[feature]])
 	plt.plot(y_pred)
 	plt.show()
