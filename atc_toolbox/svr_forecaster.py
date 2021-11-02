@@ -1,6 +1,6 @@
 from sklearn.svm import SVR
 from sklearn.multioutput import MultiOutputRegressor
-from date_utils import date_range
+from atc_toolbox.date_utils import date_range
 import pandas_market_calendars as mcal
 import pandas as pd
 
@@ -84,7 +84,13 @@ if __name__ == '__main__':
 	print(y_pred)
 	print(type(y_pred))
 
+	ma50 = df[['Adj Close']].rolling(window=50).mean()
+	ma200 = df[['Adj Close']].rolling(window=200).mean()
+
+	plt.plot(ma50, label='50 day moving average')
+	plt.plot(ma200, label='200 day moving average')
 	for feature in features:
+		
 		plt.plot(df_train[[feature]], label=f'{feature} Train')
 		plt.plot(df_test[[feature]], label=f'{feature} Test')
 		plt.plot(y_pred[[feature]], label=f'{feature} SVR Forecast')
