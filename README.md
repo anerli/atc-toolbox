@@ -7,7 +7,7 @@ This is a set of tools that can be used for financial data analysis, for use in 
 
 Normally you install modules with `pip install packagename`, however since this is not on pypi (the pip package repository), you have to install it slightly differently.
 
-Clone (or just download if you want) this repository, and (assuming you are running a terminal in the parent directory of this repository) `pip install atc-toolbox`. Then you will be able to access the `atc_toolbox` module from python. If you plan to edit the toolbox code, make sure to do `pip install -e atc-toolbox` instead to make sure your changes are reflected.
+Clone (or just download if you want) this repository, and (assuming you are running a terminal in the parent directory of this repository) `pip install -e atc-toolbox`. Then you will be able to access the `atc_toolbox` module from python. The -e flag means that when you pull new changes from atc-toolbox the changes will be automatically reflected without having to pip re-install it.
 
 ## Docs
 - There are no docs for this yet :(
