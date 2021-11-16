@@ -3,6 +3,7 @@ Curator generates the ledger.csv used by synchronizer.py to download data tables
 '''
 import pandas as pd
 from datetime import datetime
+from atc_toolbox.test_suite.manager import save_ledger
 
 snp500 = pd.read_csv('SnP500.csv')
 
@@ -22,6 +23,8 @@ ledger['EndDate'] = end_dates
 
 print(ledger.head())
 
-ledger.to_csv('ledger.csv')
+save_ledger(ledger)
+
+#ledger.to_csv('ledger.csv')
 
 print('Ledger generated.')
