@@ -7,6 +7,15 @@ SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 LEDGER_PATH = os.path.join(SCRIPT_PATH, 'ledger.csv')
 DATA_PATH = os.path.join(SCRIPT_PATH, 'data')
 
+def iterate_files():
+    for fname in os.listdir(DATA_PATH):
+        yield fname
+
+def load(fname: str) -> pd.DataFrame:
+    df = pd.read_csv(os.path.join(DATA_PATH, fname))
+    df.index = pd.to_datetime(df.index)
+    return df
+
 def row_to_fname(row: pd.Series): #symbol: str, start_date: str, end_date: str
     symbol, start_date, end_date = row['Symbol'], row['StartDate'], row['EndDate']
     return symbol + '_' +  start_date + '_' + end_date + '.csv'
