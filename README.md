@@ -43,3 +43,15 @@ plt.plot(forecaster.predict_train())
 # Show plot
 plt.show()
 ```
+
+# How to use the Test Suite
+
+## Downloading Data
+- Make sure to install the the repository as a package first
+
+Run:
+```
+python -m atc_toolbox.test_suite.synchronizer
+```
+
+## Test a Model against the Test Database
