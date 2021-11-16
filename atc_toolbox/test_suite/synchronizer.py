@@ -3,8 +3,6 @@ import os
 from typing import List
 import yfinance as yf
 
-from pandas.tseries.offsets import DateOffset
-
 SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 LEDGER_PATH = os.path.join(SCRIPT_PATH, 'ledger.csv')
 DATA_PATH = os.path.join(SCRIPT_PATH, 'data')
@@ -32,13 +30,7 @@ def remove_excess(excess: List[str]):
     for fname in excess:
         os.remove(os.path.join(DATA_PATH, fname))
 
-# def check_data(ledger):
-#     # Compare ledger against downloaded tables
-#     missing = check_missing(ledger)
-#     excess = check_excess(ledger)
-#     pass
-
-def get_missing(ledger):
+def get_missing(ledger: pd.DataFrame):
     missing = set()
     for index, row in ledger.iterrows():
         missing.add(row_to_fname(row))
@@ -47,7 +39,7 @@ def get_missing(ledger):
         missing.discard(f)
     return list(missing)
 
-def get_excess(ledger):
+def get_excess(ledger: pd.DataFrame):
     excess = set()
     for f in os.listdir(DATA_PATH):
         excess.add(f)
@@ -57,15 +49,8 @@ def get_excess(ledger):
     return list(excess)
 
 if __name__ == '__main__':
-    # TODO: Download curated datasets
     ledger = pd.read_csv(LEDGER_PATH)
-    #print(type(ledger.iloc[0,2]))
-    #symbol, start, end = fname_to_row('ABBV_2000-01-01_2021-01-01.csv')
-    #print(symbol, start, end)
-    #print(row_to_fname(symbol, start, end))
-    
 
-    #print(check_missing(ledger))
     excess = get_excess(ledger)
 
     if excess:
@@ -86,8 +71,3 @@ if __name__ == '__main__':
         print('No missing files.')
 
     print('All files up to date.')
-
-    #print('Num missing files:', len(check_missing(ledger)))
-    #print('Num excess files:', len(check_excess(ledger)))
-
-    #download(ledger)
