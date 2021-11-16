@@ -21,7 +21,7 @@ def save_ledger(ledger: pd.DataFrame):
 
 def load(fname: str) -> pd.DataFrame:
     df = pd.read_csv(os.path.join(DATA_PATH, fname))
-    df.index = pd.to_datetime(df.index)
+    df.index = pd.to_datetime(df['Date'])
     return df
 
 def row_to_fname(row: pd.Series): #symbol: str, start_date: str, end_date: str
