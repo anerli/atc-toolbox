@@ -4,7 +4,7 @@ from backtesting.test import SMA
 
 class CrossOver(Strategy):
     # Mean-reversion or momentum
-    momentum = False
+    momentum: bool = False
     def init(self):
         if not hasattr(self, 'short') or not hasattr(self, 'long'):
             raise Exception('Please setup indicators self.short and self.long, and then call super().init()')
