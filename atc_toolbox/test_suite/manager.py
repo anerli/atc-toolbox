@@ -10,6 +10,9 @@ SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 LEDGER_PATH = os.path.join(SCRIPT_PATH, 'ledger.csv')
 DATA_PATH = os.path.join(SCRIPT_PATH, 'data')
 
+if not os.path.isdir(DATA_PATH):
+    os.mkdir(DATA_PATH)
+
 def list_data():
     return os.listdir(DATA_PATH)
 
