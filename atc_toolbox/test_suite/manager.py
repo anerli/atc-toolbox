@@ -22,6 +22,7 @@ def save_ledger(ledger: pd.DataFrame):
 def load(fname: str) -> pd.DataFrame:
     df = pd.read_csv(os.path.join(DATA_PATH, fname))
     df.index = pd.to_datetime(df['Date'])
+    df.dropna(inplace=True)
     return df
 
 def row_to_fname(row: pd.Series): #symbol: str, start_date: str, end_date: str
@@ -45,7 +46,10 @@ def download_missing(missing: List[str]):
 
 def remove_excess(excess: List[str]):
     for fname in excess:
-        os.remove(os.path.join(DATA_PATH, fname))
+        remove_file(fname)
+
+def remove_file(fname: str):
+    os.remove(os.path.join(DATA_PATH, fname))
 
 def get_missing(ledger: pd.DataFrame):
     missing = set()
@@ -64,3 +68,13 @@ def get_excess(ledger: pd.DataFrame):
         fname = row_to_fname(row)
         excess.discard(fname)
     return list(excess)
+
+def verify_data():
+    removed = []
+    # Verify that each file downloaded is valid (i.e. not empty)
+    for f in list_data():
+        df = load(f)
+        if df.shape[0] == 0:
+            remove_file(f)
+            removed.append(f)
+    return removed
